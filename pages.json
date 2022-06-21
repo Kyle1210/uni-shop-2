@@ -1,6 +1,5 @@
 {
-	"pages": [
-		{
+	"pages": [{
 			"path": "pages/home/home",
 			"style": {
 				"navigationBarTitleText": "首页",
@@ -35,6 +34,16 @@
 
 		}
 	],
+	"subPackages": [{
+		"root": "subpkg",
+		"pages": [{
+			"path": "goods_detil/goods_detil",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		}]
+	}],
 	// 全局样式
 	"globalStyle": {
 		// 导航条文本颜色
@@ -49,8 +58,7 @@
 	},
 	"tabBar": {
 		"selectedColor": "#F31C1B",
-		"list": [
-			{
+		"list": [{
 				"pagePath": "pages/home/home",
 				"text": "首页",
 				"iconPath": "static/tab_icons/home.png",

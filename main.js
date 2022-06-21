@@ -3,7 +3,31 @@
 import Vue from 'vue'
 import App from './App'
 
+// 导入网络请求包
+import {$http} from '@escook/request-miniprogram'
+
 Vue.config.productionTip = false
+
+// 将网络请求包挂载到uni上
+uni.$http = $http
+
+// 设置请求根路径
+$http.baseUrl = 'https://api-ugo-web.itheima.net'
+
+// 请求拦截器
+$http.beforeRequest = (options) => {
+	// 展示loading
+	uni.showLoading({
+		title: '数据加载中...'
+	})
+}
+
+// 响应拦截器
+$http.afterRequest = () => {
+	// 关闭loading
+	uni.hideLoading()
+}
+
 
 App.mpType = 'app'
 
