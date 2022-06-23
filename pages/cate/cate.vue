@@ -2,15 +2,15 @@
 	<view class="cate-container">
 
 		<scroll-view class="left" scroll-y="true" :style="'height:' + comHeight + 'px'">
-				<view @click="activeItem(item,index)" class="left-item" v-for="(item,index) in cateList" :key="index" :class="index===active?'active':''">
+				<view @click="activeItem(item,index)" class="left-item" v-for="(item,index) in cateList" :key="item.cat_id" :class="index===active?'active':''">
 					{{item.cat_name}}
 				</view>
 		</scroll-view>
-		<scroll-view class="right" :style="'height:' + comHeight + 'px'" scroll-y="true" >
-				<view class="cate" v-for="(level2Cate,index) in level2CateList">
+		<scroll-view class="right" :style="'height:' + comHeight + 'px'" scroll-y="true" :scroll-top="scrpllTop">
+				<view class="cate" v-for="(level2Cate,index) in level2CateList" :key="level2Cate.cat_id">
 					<view class="title">/ {{level2Cate.cat_name}} /</view>
 					<view class="cs">
-						<view class="content" v-for="(item,index) in level2Cate.children" :key="index">
+						<view class="content" v-for="(item,index) in level2Cate.children" :key="item.cat_id" @click="goGoodsList(item.cat_id)">
 							<img :src="item.cat_icon.replace(/dev/,'web')" alt="">
 							<text>{{item.cat_name}}</text>
 						</view>
@@ -36,15 +36,26 @@
 				// 激活项
 				active: 0,
 				// 二级分类数据
-				level2CateList: []
+				level2CateList: [],
+				// 滚动条位置
+				scrpllTop: 0,
 			};
 		},
 		
-		methods:{
-			// 激活项
+		methods:{	
+			// 点击产品，跳转到对应的商品列表
+			goGoodsList(cid) {
+				uni.navigateTo({
+					url:`../../subpkg/goods_list/goods_list?cid=${cid}`
+				})
+			},
+			
+			// 激活项 
 			activeItem(item,index) {
 				this.active = index
 				this.level2CateList = this.cateList[index].children
+				// 滚动条回到顶部
+				this.scrpllTop = this.scrpllTop === 0? 1 : 0
 			},
 			
 			// 获取设备的可使用窗口高度
@@ -56,7 +67,6 @@
 			// 获取分类数据接口
 			async getCateList() {
 				const {data: res} = await reqGetCateList()
-				console.log(res);
 				if(res.meta.status === 200) {
 					this.cateList = res.message
 					this.level2CateList = this.cateList[0].children

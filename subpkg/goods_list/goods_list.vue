@@ -24,7 +24,10 @@
 	export default {
 		onLoad(options) {
 			this.options = options
-			this.getGoodsList(options.query)
+			if(options.query || options.cid) {
+				this.getGoodsList(options.query ||options.cid)
+			}
+				
 		},
 		
 		// 下拉刷新
@@ -33,7 +36,7 @@
 			this.goodsList = []
 			// 初始化当前页
 			this.currentPage = 1
-			this.getGoodsList(this.options.query,10,this.currentPage).then(() => {
+			this.getGoodsList(this.options.query || this.options.cid,10,this.currentPage).then(() => {
 				uni.$showMsg('刷新成功！')
 				uni.stopPullDownRefresh()
 			}).catch(() => {
@@ -58,14 +61,13 @@
 		},
 		
 		methods: {
-			
 			// 获取商品列表
 			async getGoodsList(query,limit,currentPage) {
 				this.status = 'loading'
 				const {data: res} = await reqGetGoodsList(query,limit,currentPage)
 				if(res.meta.status === 200) {
 					this.goodsList = this.goodsList.concat(res.message.goods)
-					if(res.message.goods.length > 0) {
+					if(res.message.goods.length === 10) {
 						this.status = 'more'
 					} else {
 						this.status = 'no-more'
