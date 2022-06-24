@@ -1,22 +1,25 @@
 <template>
-	<view class="cate-container">
-
-		<scroll-view class="left" scroll-y="true" :style="'height:' + comHeight + 'px'">
-				<view @click="activeItem(item,index)" class="left-item" v-for="(item,index) in cateList" :key="item.cat_id" :class="index===active?'active':''">
-					{{item.cat_name}}
-				</view>
-		</scroll-view>
-		<scroll-view class="right" :style="'height:' + comHeight + 'px'" scroll-y="true" :scroll-top="scrpllTop">
-				<view class="cate" v-for="(level2Cate,index) in level2CateList" :key="level2Cate.cat_id">
-					<view class="title">/ {{level2Cate.cat_name}} /</view>
-					<view class="cs">
-						<view class="content" v-for="(item,index) in level2Cate.children" :key="item.cat_id" @click="goGoodsList(item.cat_id)">
-							<img :src="item.cat_icon.replace(/dev/,'web')" alt="">
-							<text>{{item.cat_name}}</text>
+	<view class="cate-box">
+		<!-- 搜索框 -->
+		<Search @click.native="goSearch"></Search>
+		<view class="cate-container">
+			<scroll-view class="left" scroll-y="true" :style="'height:' + comHeight + 'px'">
+					<view @click="activeItem(item,index)" class="left-item" v-for="(item,index) in cateList" :key="item.cat_id" :class="index===active?'active':''">
+						{{item.cat_name}}
+					</view>
+			</scroll-view>
+			<scroll-view class="right" :style="'height:' + comHeight + 'px'" scroll-y="true" :scroll-top="scrpllTop">
+					<view class="cate" v-for="(level2Cate,index) in level2CateList" :key="level2Cate.cat_id">
+						<view class="title">/ {{level2Cate.cat_name}} /</view>
+						<view class="cs">
+							<view class="content" v-for="(item,index) in level2Cate.children" :key="item.cat_id" @click="goGoodsList(item.cat_id)">
+								<img :src="item.cat_icon.replace(/dev/,'web')" alt="">
+								<text>{{item.cat_name}}</text>
+							</view>
 						</view>
 					</view>
-				</view>
-		</scroll-view>
+			</scroll-view>
+		</view>
 	</view>
 </template>
 
@@ -43,6 +46,12 @@
 		},
 		
 		methods:{	
+			// 跳转到搜索页面
+			goSearch() {
+				uni.navigateTo({
+					url:'/subpkg/search/search'
+				})
+			},
 			// 点击产品，跳转到对应的商品列表
 			goGoodsList(cid) {
 				uni.navigateTo({
@@ -61,7 +70,7 @@
 			// 获取设备的可使用窗口高度
 			getComWidth() {
 				const {windowHeight: res} = uni.getWindowInfo()
-				this.comHeight = res
+				this.comHeight = res - 50
 			},
 			
 			// 获取分类数据接口

@@ -1,5 +1,9 @@
 <template>
 	<view>
+		<view class="search-box">
+			<!-- 搜索框 -->
+			<Search @click.native="goSearch"></Search>
+		</view>
 		<!-- 轮播图 -->
 		<swiper :indicator-dots="true" :autoplay="true" :interval="2000" :duration="500" :circular="true">
 			<swiper-item v-for="item in swiperList" :key="item.goods_id">
@@ -68,6 +72,13 @@
 		},
 
 		methods: {
+			// 点击搜索，跳转到搜索页面
+			goSearch() {
+				uni.navigateTo({
+					url: '/subpkg/search/search'
+				})
+			},
+			
 			// 点击图片，跳转到对应的列表页
 			toProductList(item) {
 				item.navigator_url = '/subpkg/goods_list/goods_list?' + item.navigator_url.split('?')[1]
@@ -129,6 +140,14 @@
 </script>
 
 <style lang="scss" scoped>
+	.search-box {
+		// 吸顶效果。
+		position: sticky;
+		top: 0;
+		// 提高层级，防止被其他的盖住
+		z-index: 999;
+	}
+	
 	swiper {
 		height: 330rpx;
 
