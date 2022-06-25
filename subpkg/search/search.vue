@@ -37,11 +37,14 @@
 	} from '@/api/search/search.js'
 	export default {
 		onLoad() {
-			this.searchHistory = JSON.parse(uni.getStorageSync('searchHistory') || [])
+			if(uni.getStorageSync('searchHistory')) {
+				this.searchHistory = JSON.parse(uni.getStorageSync('searchHistory') || [])
+			}	
 		},
 		
 		data() {
 			return {
+				// 定时器
 				timer: null,
 				inputVal: '',
 				// 搜索结果
