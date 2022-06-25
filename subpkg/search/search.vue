@@ -7,7 +7,7 @@
 		<!-- 搜索推荐列表 -->
 		<uni-list v-if="searchResult">
 			<!-- link :to="'/subpkg/goods_detil/goods_detil?goodsId=' + item.goods_id" -->
-			<uni-list-item :to="'/subpkg/goods_detil/goods_detil?goodsId=' + item.goods_id" class="list-item"
+			<uni-list-item :to="'/subpkg/goods_detil/goods_detil?cid=' + item.goods_id" class="list-item"
 				direction="row" v-for="(item,index) in searchResult" :key="item.goods_id">
 				<template v-slot:header>
 					<text>{{item.goods_name}}</text>

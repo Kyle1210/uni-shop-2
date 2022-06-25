@@ -7,7 +7,7 @@
 		<!-- 轮播图 -->
 		<swiper :indicator-dots="true" :autoplay="true" :interval="2000" :duration="500" :circular="true">
 			<swiper-item v-for="item in swiperList" :key="item.goods_id">
-				<navigator class="swiper-item" :url="'/subpkg/goods_detil/goods_detil?goods_id=' + item.goods_id">
+				<navigator class="swiper-item" :url="'/subpkg/goods_detil/goods_detil?cid=' + item.goods_id">
 					<img :src="item.image_src" alt="">
 				</navigator>
 			</swiper-item>

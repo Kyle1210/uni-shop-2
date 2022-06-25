@@ -1,7 +1,7 @@
 <template>
 	<view>
 		<uni-list>
-			<uni-list-item v-for="(item,index) in goodsList" :key="index">
+			<uni-list-item v-for="(item,index) in goodsList" :key="index" :to="'@/subpkg/goods_detil/goods_detil?cid=' + item.goods_id">
 				<template v-slot:header>
 					<view class="img">
 						<img mode="widthFix" :src="item.goods_small_logo">
@@ -10,7 +10,7 @@
 				<template v-slot:footer>
 					<view class="container">
 						<view class="title">{{item.goods_name}}</view>
-						<view class="price">￥{{item.goods_price}}</view>
+						<view class="price">￥{{item.goods_price | toFixed}}</view>
 					</view>
 				</template>
 			</uni-list-item>
@@ -23,11 +23,9 @@
 	import {reqGetGoodsList} from '@/api/goodsList/goodsList.js'
 	export default {
 		onLoad(options) {
-			this.options = options
-			if(options.query || options.cid) {
-				this.getGoodsList(options.query ||options.cid)
-			}
-				
+			this.queryObj.cid = options.cid || '',
+			this.queryObj.query = options.query || ''
+			this.getGoodsList()
 		},
 		
 		// 下拉刷新
@@ -35,38 +33,48 @@
 			// 初始化商品列表
 			this.goodsList = []
 			// 初始化当前页
-			this.currentPage = 1
-			this.getGoodsList(this.options.query || this.options.cid,10,this.currentPage).then(() => {
-				uni.$showMsg('刷新成功！')
-				uni.stopPullDownRefresh()
-			}).catch(() => {
-				uni.$showMsg('刷新失败！')
-			})
+			this.queryObj.pagenum = 1
+			// 初始化总条数
+			this.total = null
+			this.getGoodsList(() => uni.stopPullDownRefresh())
 		},
 		
 		// 上拉加载数据
 		onReachBottom() {
+			// 判断是否已经是最后一页
+			if(this.queryObj.pagenum * this.queryObj.pagesize >= this.total) {
+				// 已经是最后一页了，不要在发请求
+				return
+			}
 			// 将当前页+1
-			this.currentPage = this.currentPage + 1
-			this.getGoodsList(this.options.query,10,this.currentPage)
+			this.queryObj.pagenum += 1
+			this.getGoodsList()
 		},
 		
 		data() {
 			return {
+				queryObj: {
+					query: '',
+					cid: '',
+					pagenum: 1,
+					pagesize: 10
+				},
 				goodsList: [],
-				currentPage: 1,
-				options: {},
+				total: null,
 				status: 'more'
 			};
 		},
 		
 		methods: {
 			// 获取商品列表
-			async getGoodsList(query,limit,currentPage) {
+			async getGoodsList(cb) {
 				this.status = 'loading'
-				const {data: res} = await reqGetGoodsList(query,limit,currentPage)
+				const {data: res} = await reqGetGoodsList(this.queryObj)
+				// 数据已经请求回来了，此时立马关闭刷新
+				cb && cb()
 				if(res.meta.status === 200) {
 					this.goodsList = this.goodsList.concat(res.message.goods)
+					this.total = res.message.total
 					if(res.message.goods.length === 10) {
 						this.status = 'more'
 					} else {
@@ -75,6 +83,13 @@
 				} else {
 					uni.$showMsg()
 				}
+			}
+		},
+		
+		// 过滤器
+		filters: {
+			toFixed(num) {
+				return Number(num).toFixed(2)
 			}
 		}
 	}
