@@ -31,6 +31,8 @@
 				</uni-list-item>
 			</uni-list>
 		</view>
+		<!--  -->
+		<rich-text :nodes="goodsInfo.goods_introduce"></rich-text>
 	</view>
 </template>
 
@@ -59,6 +61,8 @@
 			async getGoodsDetail(goods_id) {
 				const {data: res} = await reqGetGoodsDetailList(goods_id)
 				if(res.meta.status === 200) {
+					// 
+					res.message.goods_introduce.replace(/<img /g,'<img style="display:block;"')
 					this.goodsInfo = res.message
 				} else {
 					uni.$showMsg('获取商品信息失败.')

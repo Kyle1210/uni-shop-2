@@ -37,7 +37,7 @@
 	"subPackages": [{
 		"root": "subpkg",
 		"pages": [{
-			"path": "goods_detil/goods_detil",
+			"path": "goods_detail/goods_detail",
 			"style": {
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
