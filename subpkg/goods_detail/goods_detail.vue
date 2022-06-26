@@ -34,7 +34,7 @@
 		<!--  -->
 		<rich-text :nodes="goodsInfo.goods_introduce"></rich-text>
 		<!-- 商品导航栏 -->
-		<uni-goods-nav :fill="true" :options="options" :button-group="buttonGroup" @click="" @buttonClick="" />
+		<uni-goods-nav :fill="true" :options="options" :button-group="buttonGroup" @click="clickHendle" @buttonClick="" />
 	</view>
 </template>
 
@@ -75,6 +75,16 @@
 		},
 
 		methods: {
+			// 点击购物车
+			clickHendle(e) {
+				if(e.content.text === '购物车') {
+					// 跳转到购物车页面
+					uni.switchTab({
+						url: '/pages/cart/cart'
+					})
+				}
+			},
+			
 			// 点击轮播图放大图片
 			preview(item) {
 				uni.previewImage({
