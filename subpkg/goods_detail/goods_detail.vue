@@ -4,11 +4,11 @@
 		<view class="swiper-box">
 			<swiper :indicator-dots="true" :autoplay="true" :interval="3000" :duration="1000" :circular="true">
 				<swiper-item v-for="item in goodsInfo.pics" :key="item.pics_id" @click="preview(item)">
-						<img :src="item.pics_mid" alt="">
+					<img :src="item.pics_mid" alt="">
 				</swiper-item>
 			</swiper>
 		</view>
-		
+
 		<!-- 商品信息区域 -->
 		<view class="goods-info-box">
 			<uni-list :border="false">
@@ -22,7 +22,7 @@
 							<view class="goods-collect">
 								<uni-icons type="star" size="18" color="#8C8B8C"></uni-icons>
 								<text>收藏</text>
-						</view>
+							</view>
 						</view>
 					</template>
 					<template v-slot:footer>
@@ -33,36 +33,63 @@
 		</view>
 		<!--  -->
 		<rich-text :nodes="goodsInfo.goods_introduce"></rich-text>
+		<!-- 商品导航栏 -->
+		<uni-goods-nav :fill="true" :options="options" :button-group="buttonGroup" @click="" @buttonClick="" />
 	</view>
 </template>
 
 <script>
-	import {reqGetGoodsDetailList} from '@/api/goodsDetail/goodsDetail.js' 
+	import {
+		reqGetGoodsDetailList
+	} from '@/api/goodsDetail/goodsDetail.js'
 	export default {
 		onLoad(options) {
 			this.getGoodsDetail(options.goods_id)
 		},
-		
+
 		data() {
 			return {
-				goodsInfo: {}
+				goodsInfo: {},
+				options: [{
+						icon: 'shop',
+						text: '店铺',
+					},
+					{
+						icon: 'cart',
+						text: '购物车',
+						info: 2
+					}
+				],
+				buttonGroup: [{
+						text: '加入购物车',
+						backgroundColor: '#ff0000',
+						color: '#fff'
+					},
+					{
+						text: '立即购买',
+						backgroundColor: '#ffa200',
+						color: '#fff'
+					}
+				]
 			};
 		},
-		
+
 		methods: {
 			// 点击轮播图放大图片
 			preview(item) {
 				uni.previewImage({
-					urls:[item.pics_big_url]
+					urls: [item.pics_big_url]
 				})
 			},
-			
+
 			// 获取商品详情信息
 			async getGoodsDetail(goods_id) {
-				const {data: res} = await reqGetGoodsDetailList(goods_id)
-				if(res.meta.status === 200) {
+				const {
+					data: res
+				} = await reqGetGoodsDetailList(goods_id)
+				if (res.meta.status === 200) {
 					// 
-					res.message.goods_introduce.replace(/<img /g,'<img style="display:block;"')
+					res.message.goods_introduce.replace(/<img /g, '<img style="display:block;"')
 					this.goodsInfo = res.message
 				} else {
 					uni.$showMsg('获取商品信息失败.')
@@ -73,44 +100,49 @@
 </script>
 
 <style lang="scss" scoped>
-.swiper-box {
-	swiper {
-		height: 750rpx;
-		img {
-			width: 100%;
-			height: 100%;
-		}
-	}
-}
+	.swiper-box {
+		swiper {
+			height: 750rpx;
 
-.goods-info-box {
-	padding: 0 10rpx;
-	.goods-price {
-		color: red;
-		padding: 10rpx 0;
-	}
-	.goods-body {
-		display: flex;
-		justify-content: space-between;
-		.goods-name {
-			font-size: 26rpx;
-			margin-bottom: 10rpx;
+			img {
+				width: 100%;
+				height: 100%;
+			}
 		}
-		.goods-collect {
-			font-size: 26rpx;
-			color: gray;
-			width: 200rpx;
+	}
+
+	.goods-info-box {
+		padding: 0 10rpx;
+
+		.goods-price {
+			color: red;
+			padding: 10rpx 0;
+		}
+
+		.goods-body {
 			display: flex;
-			flex-direction: column;
-			justify-content: center;
-			align-items: center;
-			border-left: 1rpx solid #EFEFEF;
+			justify-content: space-between;
+
+			.goods-name {
+				font-size: 26rpx;
+				margin-bottom: 10rpx;
+			}
+
+			.goods-collect {
+				font-size: 26rpx;
+				color: gray;
+				width: 200rpx;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+				border-left: 1rpx solid #EFEFEF;
+			}
+		}
+
+		.footer {
+			color: gray;
+			font-size: 24rpx
 		}
 	}
-	
-	.footer {
-		color: gray;
-		font-size: 24rpx
-	}
-}
 </style>
