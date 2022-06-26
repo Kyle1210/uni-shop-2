@@ -5,12 +5,17 @@
 </template>
 
 <script>
+	import {
+		mapState
+	} from 'vuex'
+	import tabbarBadge from '@/mixins/tabbar-badge.js'
 	export default {
+		mixins: [tabbarBadge],
 		data() {
 			return {
-				
+
 			};
-		}
+		},
 	}
 </script>
 

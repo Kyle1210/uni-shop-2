@@ -7,7 +7,7 @@
 		<!-- 轮播图 -->
 		<swiper :indicator-dots="true" :autoplay="true" :interval="2000" :duration="500" :circular="true">
 			<swiper-item v-for="item in swiperList" :key="item.goods_id">
-				<navigator class="swiper-item" :url="'/subpkg/goods_detil/goods_detil?cid=' + item.goods_id">
+				<navigator class="swiper-item" :url="'/subpkg/goods_detail/goods_detail?goods_id=' + item.goods_id">
 					<img :src="item.image_src" alt="">
 				</navigator>
 			</swiper-item>
@@ -51,6 +51,7 @@
 		reqGetcateList,
 		reqGetFloorList
 	} from '@/api/home/home.js'
+	import tabbarBadge from '@/mixins/tabbar-badge.js'
 	export default {
 		onLoad() {
 			// 请求轮播图数据
@@ -60,6 +61,9 @@
 			// 获取楼层数据
 			this.getFloorList()
 		},
+		
+		mixins: [tabbarBadge],
+		
 		data() {
 			return {
 				// 轮播图数据

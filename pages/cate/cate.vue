@@ -25,11 +25,15 @@
 
 <script>
 	import {reqGetCateList} from '@/api/cate/cate.js'
+	import tabbarBadge from '@/mixins/tabbar-badge.js'
 	export default {
 		onLoad() {
 			this.getCateList()
 			this.getComWidth()
 		},
+		
+		mixins: [tabbarBadge],
+		
 		data() {
 			return {
 				// 分类数据

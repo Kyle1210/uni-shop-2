@@ -26,7 +26,7 @@
 						</view>
 					</template>
 					<template v-slot:footer>
-						<text class="footer">快递：免运费 {{cartList.length}}</text>
+						<text class="footer">快递：免运费</text>
 					</template>
 				</uni-list-item>
 			</uni-list>
