@@ -26,7 +26,7 @@
 						</view>
 					</template>
 					<template v-slot:footer>
-						<text class="footer">快递：免运费</text>
+						<text class="footer">快递：免运费 {{cartList.length}}</text>
 					</template>
 				</uni-list-item>
 			</uni-list>
@@ -34,7 +34,7 @@
 		<!--  -->
 		<rich-text :nodes="goodsInfo.goods_introduce"></rich-text>
 		<!-- 商品导航栏 -->
-		<uni-goods-nav :fill="true" :options="options" :button-group="buttonGroup" @click="clickHendle" @buttonClick="" />
+		<uni-goods-nav :fill="true" :options="options" :button-group="buttonGroup" @click="clickHendle" @buttonClick="buttonClickHandle" />
 	</view>
 </template>
 
@@ -42,9 +42,11 @@
 	import {
 		reqGetGoodsDetailList
 	} from '@/api/goodsDetail/goodsDetail.js'
+	import {mapState,mapMutations} from 'vuex'
 	export default {
 		onLoad(options) {
 			this.getGoodsDetail(options.goods_id)
+			this.cartTotal()	
 		},
 
 		data() {
@@ -75,6 +77,35 @@
 		},
 
 		methods: {
+			// 让购物车的数量动态展示
+			cartTotal() {
+				const result = this.options.find(item => item.text === '购物车')
+				if(result) {
+					result.info = this.cartCount
+				}	
+			},
+			
+			...mapMutations('cart',['ADD_GOODS']),
+			
+			// 加入购物车
+			buttonClickHandle(e) {
+				console.log(this.cartList);
+				if(e.content.text === '加入购物车') {
+					// 声明一个对象，用于保存商品信息
+					const goodsInfo = {
+						goods_id: this.goodsInfo.goods_id,
+						goods_name: this.goodsInfo.goods_name,
+						goods_price: this.goodsInfo.goods_price,
+						goods_count: 1,
+						goods_smail_logo: this.goodsInfo.goods_small_logo,
+						goods_status: true
+					}
+					this.ADD_GOODS(goodsInfo)
+					this.cartTotal()
+					this.$store.commit('cart/SAVA_TO_STORAGE')		
+				}
+			},
+			
 			// 点击购物车
 			clickHendle(e) {
 				if(e.content.text === '购物车') {
@@ -105,8 +136,23 @@
 					uni.$showMsg('获取商品信息失败.')
 				}
 			}
+		},
+		
+		computed: {
+			...mapState('cart',['cartList']),
+			
+			// 购物车总数
+			cartCount() {
+				let number = 0
+				this.cartList.forEach(item => {
+					number = number + item.goods_count
+				}) 
+				return number
+			}
 		}
 	}
+	
+	
 </script>
 
 <style lang="scss" scoped>

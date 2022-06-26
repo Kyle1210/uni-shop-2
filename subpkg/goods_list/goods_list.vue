@@ -1,7 +1,7 @@
 <template>
 	<view>
 		<uni-list>
-			<uni-list-item v-for="(item,index) in goodsList" :key="index"  link="navigateTo" :to="'/subpkg/goods_detail/goods_detail?cid=' + item.goods_id">
+			<uni-list-item v-for="(item,index) in goodsList" :key="index"  link="navigateTo" :to="'/subpkg/goods_detail/goods_detail?goods_id=' + item.goods_id">
 				<template v-slot:header>
 					<view class="img">
 						<img mode="widthFix" :src="item.goods_small_logo">

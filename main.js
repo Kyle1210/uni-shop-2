@@ -5,6 +5,7 @@ import App from './App'
 import  {showMsg} from '@/utils/common.js'
 // 导入网络请求包
 import {$http} from '@escook/request-miniprogram'
+import store from '@/store/store.js'
 
 Vue.config.productionTip = false
 
@@ -31,7 +32,8 @@ $http.afterRequest = () => {
 App.mpType = 'app'
 
 const app = new Vue({
-    ...App
+    ...App,
+		store
 })
 app.$mount()
 // #endif
