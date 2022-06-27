@@ -3,6 +3,16 @@ const actions = {
 }
 
 const mutations = {
+	// 修改商品的选中状态
+	SET_GOODS_STATUS(state,goodsInfo) {
+		if(goodsInfo) {
+			const result =  state.cartList.find(item => item.goods_id === goodsInfo.goods_id)
+			result.goods_status = goodsInfo.goods_status
+			// 本地持久储存
+			this.commit('cart/SAVA_TO_STORAGE')
+		}
+	},
+	
 	// 添加一个商品到vuex
 	ADD_GOODS(state,goodsInfo) {
 		// 查询vuex里有没有这个商品. 如果有的话，find方法返回的就是查询出来商品信息。没有的话返回的则是undefined

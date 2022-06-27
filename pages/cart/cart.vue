@@ -6,58 +6,73 @@
 			<text>购物车</text>
 		</view>
 		<!-- 列表部分 -->
-		<uni-list>
-			<uni-list-item class="goods-list" v-for="goods in cartList" :key="goods.goods_id">
-				<!-- 选择部分 -->
-				<template v-slot:header>
-						<label class="radio">
-							<radio value="2" color="red" :checked="isCheck"/>
-						</label>
-				</template>
-				<!-- 商品图片 -->
-				<template v-slot:body>
-					<view class="goods_img">
-						<img :src="goods.goods_smail_logo" alt="">
+		<view class="goods-list">
+			<view class="goods-list-item" v-for="item in prictToFiex" :key="item.goods_id">
+				<!-- 单选框 -->
+				<label class="radio">
+					<radio :checked="item.goods_status" @click="editChecked(item)" value="" color="red" />
+				</label>
+				<!-- 图片部分 -->
+				<view class="goods-img">
+					<img :src="item.goods_smail_logo" alt="">
+				</view>
+				<!-- 商品名称与价格以及购买数量部分 -->
+				<view class="goods-info-box">
+					<!-- 名称 -->
+					<text>{{item.goods_name}}</text>
+					<view class="goods-price-count">
+						<!-- 价格 -->
+						<text>￥ {{item.goods_price}}</text>
+						<!-- 购买数量-->
+						<uni-number-box :min="1" :value="item.goods_count"></uni-number-box>
 					</view>
-				</template>
-				<!-- 商品信息 -->
-				<template v-slot:footer>
-					<view class="goods-info">
-						<text>{{goods.goods_name}}</text>
-						<view class="footer">
-							<view class="goods-price">{{goods.goods_price}}</view>
-							<view class="goods-count"></view>
-						</view>
-					</view>
-				</template>
-			</uni-list-item>
-		</uni-list>
+				</view>
+			</view>
+		</view>
+		
 	</view>
 </template>
 
 <script>
 	import {
-		mapState
+		mapState,mapMutations
 	} from 'vuex'
 	import tabbarBadge from '@/mixins/tabbar-badge.js'
 	export default {
 		mixins: [tabbarBadge],
 		data() {
 			return {
-				isCheck: false
+
 			};
 		},
 		methods: {
+			...mapMutations('cart',['SET_GOODS_STATUS','SAVA_TO_STORAGE']),
 			
+			editChecked(goods) {
+				// 修改当前商品的选中状态
+				goods.goods_status = !goods.goods_status
+				// 将最新的状态同步到vuex
+				this.SET_GOODS_STATUS(goods)
+				
+			}
 		},
 		
 		computed: {
 			...mapState('cart',['cartList']),		
+			
+			// 处理价格的小数点
+			prictToFiex() {
+				console.log(this.cartList);
+				this.cartList.forEach(item => {
+					item.goods_price =parseInt(item.goods_price).toFixed(2)
+				})
+				return this.cartList
+			}
 		}
 	}
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
  .title {
 	 display: flex;
 	 padding-left: 10rpx;
@@ -69,7 +84,38 @@
 	 }
  }
  
- .goods-list {
+ .goods-list-item {
+	 background-color: #FFFFFF;
+	 padding: 20rpx;
 	 display: flex;
+	 justify-content: space-between;
+	 align-items: center;
+	 .goods-img {
+		 width: 240rpx ;
+		 height: 240rpx;
+		 img {
+			 width: 240rpx;
+			 height: 100%;
+		 }
+	 }
+	 .goods-info-box {
+		 flex: 1;
+		 height: 240rpx;
+		 display: flex;
+		 flex-direction: column;
+		 justify-content: space-between;
+		 margin-left: 20rpx;
+		 text {
+			 font-size: 26rpx
+		 }
+		 .goods-price-count {
+			 display: flex;
+			 justify-content: space-between;
+			 text {
+				 font-size: 36rpx;
+				 color: red;			
+			 }
+		 }
+	 }
  }
 </style>
