@@ -6,7 +6,7 @@ export default {
 	},
 	
 	methods: {
-		// 设置当前页面的角标
+		// 设置购物车的角标
 		setBadge() {
 			if(this.cartCount) {
 				uni.setTabBarBadge({
