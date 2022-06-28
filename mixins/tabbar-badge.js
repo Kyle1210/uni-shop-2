@@ -32,5 +32,16 @@ export default {
 				return null
 			}
 		}
+	},
+	
+	watch: {
+		// 监听购物车数量的变化
+		cartList: {
+			handler() {
+				this.setBadge()
+			},
+			// 深度监听
+			deep: true
+		}
 	}
 }

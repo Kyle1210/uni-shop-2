@@ -24,7 +24,7 @@
 						<!-- 价格 -->
 						<text>￥ {{item.goods_price}}</text>
 						<!-- 购买数量-->
-						<uni-number-box :min="1" :value="item.goods_count"></uni-number-box>
+						<uni-number-box @change=changeHandle(item,$event) :min="1" :value="item.goods_count"></uni-number-box>
 					</view>
 				</view>
 			</view>
@@ -42,11 +42,22 @@
 		mixins: [tabbarBadge],
 		data() {
 			return {
-
+				
 			};
 		},
 		methods: {
-			...mapMutations('cart',['SET_GOODS_STATUS','SAVA_TO_STORAGE']),
+			
+			...mapMutations('cart',['SET_GOODS_STATUS','SAVA_TO_STORAGE','SET_GOODS_COUNT']),
+			
+			// 修改购买数量
+			changeHandle(goods,val) {
+				console.log(goods,val);
+				// 清除定时器
+				clearTimeout(this.timer)
+				// 将最新的商品购买数量同步到vuex
+				this.SET_GOODS_COUNT({goods,val})
+			},
+			
 			
 			editChecked(goods) {
 				// 修改当前商品的选中状态
@@ -62,7 +73,6 @@
 			
 			// 处理价格的小数点
 			prictToFiex() {
-				console.log(this.cartList);
 				this.cartList.forEach(item => {
 					item.goods_price =parseInt(item.goods_price).toFixed(2)
 				})

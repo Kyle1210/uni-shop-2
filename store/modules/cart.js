@@ -3,6 +3,16 @@ const actions = {
 }
 
 const mutations = {
+	// 修改购物车商品的购买数量
+	SET_GOODS_COUNT(state,goodsInfo) {
+		const result = state.cartList.find(item => item.goods_id === goodsInfo.goods.goods_id)
+		if(result) {
+			result.goods_count = goodsInfo.val
+			// 本地化储存
+			this.commit('cart/SAVA_TO_STORAGE')
+		}
+	},
+	
 	// 修改商品的选中状态
 	SET_GOODS_STATUS(state,goodsInfo) {
 		if(goodsInfo) {
