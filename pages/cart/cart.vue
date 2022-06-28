@@ -1,40 +1,52 @@
 <template>
 	<view>
-		<!-- 购物车标题部分 -->
-		<view class="title">
-			<uni-icons type="shop-filled" size="22"></uni-icons>
-			<text>购物车</text>
-		</view>
-		<!-- 列表部分 -->
-		<uni-swipe-action>
-			<view v-for="item in prictToFiex" :key="item.goods_id">
-				<uni-swipe-action-item :right-options="options" @click="onClick"
-					@change="change">
-					<view class="goods-list-item">
-						<!-- 单选框 -->
-						<label class="radio">
-							<radio :checked="item.goods_status" @click="editChecked(item)" value="" color="red" />
-						</label>
-						<!-- 图片部分 -->
-						<view class="goods-img">
-							<img :src="item.goods_smail_logo" alt="">
-						</view>
-						<!-- 商品名称与价格以及购买数量部分 -->
-						<view class="goods-info-box">
-							<!-- 名称 -->
-							<text>{{item.goods_name}}</text>
-							<view class="goods-price-count">
-								<!-- 价格 -->
-								<text>￥ {{item.goods_price}}</text>
-								<!-- 购买数量-->
-								<uni-number-box @change=changeHandle(item,$event) :min="1" :value="item.goods_count">
-								</uni-number-box>
+		<view v-if="cartList.length !== 0">
+			<!-- 收货地址组件 -->
+			<Address></Address>
+			<!-- 购物车标题部分 -->
+			<view class="title">
+				<uni-icons type="shop-filled" size="22"></uni-icons>
+				<text>购物车</text>
+			</view>
+			<!-- 列表部分 -->
+			<uni-swipe-action>
+				<view v-for="item in prictToFiex" :key="item.goods_id">
+					<uni-swipe-action-item :right-options="options" @click="onClick(item)">
+						<view class="goods-list-item">
+							<!-- 单选框 -->
+							<label class="radio">
+								<radio :checked="item.goods_status" @click="editChecked(item)" value="" color="red" />
+							</label>
+							<!-- 图片部分 -->
+							<view class="goods-img">
+								<img :src="item.goods_smail_logo" alt="">
+							</view>
+							<!-- 商品名称与价格以及购买数量部分 -->
+							<view class="goods-info-box">
+								<!-- 名称 -->
+								<text>{{item.goods_name}}</text>
+								<view class="goods-price-count">
+									<!-- 价格 -->
+									<text>￥ {{item.goods_price}}</text>
+									<!-- 购买数量-->
+									<uni-number-box @change=changeHandle(item,$event) :min="1"
+										:value="item.goods_count">
+									</uni-number-box>
+								</view>
 							</view>
 						</view>
-					</view>
-				</uni-swipe-action-item>
-			</view>
-		</uni-swipe-action>
+					</uni-swipe-action-item>
+				</view>
+			</uni-swipe-action>
+			<!-- 结算组件 -->
+			<Settle></Settle>
+		</view>
+		
+		<!-- 购物车为空的时候展示的区域 -->
+		<view class="empty-box" v-else>
+			<img src="/static/cart_empty@2x.png" alt="">
+			<text>空空如也~</text>
+		</view>
 	</view>
 </template>
 
@@ -58,18 +70,15 @@
 			};
 		},
 		methods: {
-			// 购物车
-			onClick() {
-				
-			}
+			// 点击滑动后的删除按钮
+			onClick(goods) {
+				this.DELETE_GOODS(goods)
+			},
 
-			...mapMutations('cart', ['SET_GOODS_STATUS', 'SAVA_TO_STORAGE', 'SET_GOODS_COUNT']),
+			...mapMutations('cart', ['SET_GOODS_STATUS', 'SAVA_TO_STORAGE', 'SET_GOODS_COUNT', 'DELETE_GOODS']),
 
 			// 修改购买数量
 			changeHandle(goods, val) {
-				console.log(goods, val);
-				// 清除定时器
-				clearTimeout(this.timer)
 				// 将最新的商品购买数量同步到vuex
 				this.SET_GOODS_COUNT({
 					goods,
@@ -120,6 +129,7 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+		padding-bottom: 110rpx;
 
 		.goods-img {
 			width: 240rpx;
@@ -146,12 +156,26 @@
 			.goods-price-count {
 				display: flex;
 				justify-content: space-between;
-
 				text {
 					font-size: 36rpx;
 					color: red;
 				}
 			}
+		}
+	}
+	.empty-box {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		padding-top: 300rpx;
+		img {
+			width: 180rpx;
+			height: 180rpx;
+		}
+		text {
+			color: #999899;
+			font-size: 24rpx;
 		}
 	}
 </style>

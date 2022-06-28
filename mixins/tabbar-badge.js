@@ -7,11 +7,15 @@ export default {
 	
 	methods: {
 		// 设置购物车的角标
-		setBadge() {
+		setBadge() {	
 			if(this.cartCount) {
 				uni.setTabBarBadge({
 					index: 2,
 					text: this.cartCount + ''
+				})
+			} else {
+				uni.removeTabBarBadge({
+					index: 2
 				})
 			}
 		}
