@@ -64,6 +64,11 @@ const state = {
 }
 
 const getters = {
+	// 已勾选商品数量
+	checkGoodsCount(state) {
+		return state.cartList.filter(item => item.goods_status)
+	},
+	
 	// 购物车总数
 	cartCountStr(state) {
 		let number = 0

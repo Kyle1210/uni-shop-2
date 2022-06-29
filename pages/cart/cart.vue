@@ -53,7 +53,8 @@
 <script>
 	import {
 		mapState,
-		mapMutations
+		mapMutations,
+		mapGetters
 	} from 'vuex'
 	import tabbarBadge from '@/mixins/tabbar-badge.js'
 	export default {
@@ -98,7 +99,6 @@
 
 		computed: {
 			...mapState('cart', ['cartList']),
-
 			// 处理价格的小数点
 			prictToFiex() {
 				this.cartList.forEach(item => {

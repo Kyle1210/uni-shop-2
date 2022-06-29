@@ -10,7 +10,7 @@
 			<text class="price"> ￥{{cartPrice}}</text>
 		</view>
 		<!-- 结算按钮 -->
-		<view class="btn-settle">
+		<view class="btn-settle" @click="btnClickHandle">
 			结算({{cartCountStr}})
 		</view>
 	</view>
@@ -27,6 +27,26 @@
 		},
 		
 		methods: {
+			// 点击了结算按钮
+			btnClickHandle() {
+				// 用户未勾选商品
+				if(this.checkGoodsCount.length === 0) {
+					uni.$showMsg('请勾选商品！')
+					return
+				}
+				// 用户未填收货地址
+				// 这里获得的数据是 {__ob__: Observer}，只能判断不行。
+				if(Object.entries(this.address).length === 0){
+					uni.$showMsg('请选择收货地址！')
+					return
+				}
+				// 用户未登陆
+				if(!this.token) {
+					uni.$showMsg('请登录！')
+					return
+				}
+			},
+			
 			...mapMutations('cart',['SET_GOODS_ALLSTATUS']),
 
 			// 点击全选框,修改所有商品的选中状态
@@ -36,9 +56,10 @@
 		},
 		
 		computed: {
-			...mapGetters('cart',['cartCountStr','cartPrice']),
+			...mapGetters('cart',['cartCountStr','cartPrice','checkGoodsCount']),
 			...mapState('cart',['cartList']),
-			
+			// 用户收货地址 token
+			...mapState('user',['address','token']),
 			// 用于控制全选状态
 			isAllCheck() {
 				// 循环遍历购物车，只要所有商品都是勾选状态，那么直接让全选框选中
