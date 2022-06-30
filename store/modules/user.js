@@ -3,6 +3,11 @@ const actions = {
 }
 
 const mutations = {
+	// 设置用户登录前的页面
+	SET_BACK_INFO(state,info) {
+		state.backInfo = info
+	},
+	
 	// 删除token
 	DELETE_TOKEN(state) {
 		state.token = ''
@@ -31,10 +36,12 @@ const mutations = {
 const state = {
 	address: JSON.parse(uni.getStorageSync('address') || '{}'),
 	token: uni.getStorageSync('token') || '',
-	userInfo: JSON.parse(uni.getStorageSync('userInfo') || '{}')
+	userInfo: JSON.parse(uni.getStorageSync('userInfo') || '{}'),
+	backInfo: {}
 }
 
 const getters = {
+	// 收货地址
 	addressStr() {
 		if(!state.address) {
 			return ''

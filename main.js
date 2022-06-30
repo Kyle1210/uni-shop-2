@@ -20,6 +20,13 @@ $http.beforeRequest = (options) => {
 	uni.showLoading({
 		title: '数据加载中...'
 	})
+	
+	// 含有my的路径都需要token
+	if(options.url.indexOf('my') !== -1) {
+		// 将token添加到请求头
+		options.header.Authorization = store.state.user.token
+		console.log(options);
+	}
 }
 
 // 响应拦截器

@@ -18,15 +18,55 @@
 
 <script>
 	import {mapGetters,mapState,mapMutations} from 'vuex'
+	import {reqCreateOrder,reqGetunifiedOrder} from '@/api/order/order.js'
 	export default {
-		name:"Settle",
+		name:"Settle",		
 		data() {
 			return {
-				
+				// 默认倒计时的秒数
+				countDown: 3,
+				// 定时器的id
+				timer: null
 			};
 		},
 		
-		methods: {
+		methods: {				
+			// 创建订单的方法
+			async createOrder() {
+				// 收集参数
+				const orderInfo = {
+					consignee_addr: this.addressStr,
+					order_price: this.cartPrice,
+					goods: this.checkGoodsCount.map(item => ({
+						goods_id: item.goods_id,
+						goods_number: item.goods_count,
+						goods_price: item.goods_price
+					}))
+				}
+				const {data: res} = await reqCreateOrder(orderInfo)
+				if(res.meta.status === 200) {
+					// 订单创建成功，储存订单编号
+					const unifiedOrder = res.message.order_number
+					// 获取预支付对象，这里报用户id不存在
+					const {data: result} = await reqGetunifiedOrder(unifiedOrder)
+					console.log(result)
+				} else {
+					uni.$showMsg('订单创建失败.')
+					return
+				}
+			},
+			
+			// 展示倒计时
+			showContDown(n) {
+				uni.showToast({
+					icon: 'none',
+					title: '您未登陆，'+ n + '秒后跳转到登陆页面。',
+					// 遮罩层，防止点击穿透
+					mask: true,
+					duration: 1000
+				})
+			},
+			
 			// 点击了结算按钮
 			btnClickHandle() {
 				// 用户未勾选商品
@@ -42,12 +82,39 @@
 				}
 				// 用户未登陆
 				if(!this.token) {
-					uni.$showMsg('请登录！')
-					return
+					// 弹窗提醒
+					this.showContDown(this.countDown)
+					// 设置定时器
+					this.timer = setInterval(() => {
+						if(this.countDown <= 1) {
+							clearInterval(this.timer)
+							// 跳转到登陆页
+							uni.switchTab({
+								url: '/pages/my/my',
+								success: () => {
+									// 跳转成功后，将当前页面的信息保存用vuex
+									this.SET_BACK_INFO({
+										from: '/pages/cart/cart',
+										openType: 'switchTab'
+									})
+								},
+								// 不管是否跳转成功，都要初始化倒计时默认值
+								complete: () => {
+									this.countDown = 3
+								}
+							})
+							return
+						}
+						this.countDown--
+						this.showContDown(this.countDown)
+					}, 1000)
 				}
+				// 创建订单
+				this.createOrder()
 			},
 			
 			...mapMutations('cart',['SET_GOODS_ALLSTATUS']),
+			...mapMutations('user',['SET_BACK_INFO']),
 
 			// 点击全选框,修改所有商品的选中状态
 			radioClickHandle() {
@@ -60,6 +127,7 @@
 			...mapState('cart',['cartList']),
 			// 用户收货地址 token
 			...mapState('user',['address','token']),
+			...mapGetters('user',['addressStr']),
 			// 用于控制全选状态
 			isAllCheck() {
 				// 循环遍历购物车，只要所有商品都是勾选状态，那么直接让全选框选中

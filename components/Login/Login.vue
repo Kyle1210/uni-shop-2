@@ -10,7 +10,7 @@
 </template>
 
 <script>
-	import {mapMutations} from 'vuex'
+	import {mapMutations,mapState} from 'vuex'
 	import {login} from '@/api/user/user.js'
 	export default {
 		name:"Login",
@@ -21,7 +21,7 @@
 		},
 		
 		methods: {
-			...mapMutations('user',['SET_TOKEN']),
+			...mapMutations('user',['SET_TOKEN','SET_BACK_INFO']),
 			
 			getUserInfo() {
 				this.getUser()
@@ -29,7 +29,6 @@
 			
 			// 获取code
 			getCode() {
-				const _this = this
 				uni.login({
 					onlyAuthorize: true,
 					success: (res) => {
@@ -74,9 +73,22 @@
 			// 登陆
 			async login() {
 				const res = await login(this.query)
-				// 无权限，那就自己设置一个token吧
-				this.SET_TOKEN('xxxxxxxxxxxxx')
-			}			
+				// 无权限,照抄接口文档的token
+				this.SET_TOKEN('Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjIzLCJpYXQiOjE1NjQ3MzAwNzksImV4cCI6MTAwMTU2NDczMDA3OH0.YPt-XeLnjV-_1ITaXGY2FhxmCe4NvXuRnRB8OMCfnPo')
+				// 登陆成功
+				if(this.backInfo && this.backInfo.openType === 'switchTab') {
+					uni.switchTab({
+						url: this.backInfo.from,
+						complete: () => {
+							this.SET_BACK_INFO(null)
+						}
+					})
+				}
+			}		 	
+		},
+		
+		computed: {
+			...mapState('user',['backInfo'])
 		}
 	}
 </script>
